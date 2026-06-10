@@ -28,6 +28,12 @@ if RENDER_HOST:
     CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_HOST}")
 # *.onrender.com domenidan kelgan so'rovlarga ham ishonamiz (zaxira).
 CSRF_TRUSTED_ORIGINS.append("https://*.onrender.com")
+# Vercel domeni (*.vercel.app) — POST so'rovlari (simulyatsiya/qiyoslash) uchun.
+CSRF_TRUSTED_ORIGINS.append("https://*.vercel.app")
+VERCEL_URL = os.environ.get("VERCEL_URL")
+if VERCEL_URL:
+    ALLOWED_HOSTS.append(VERCEL_URL)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{VERCEL_URL}")
 
 # --- Ilovalar -----------------------------------------------------------------
 INSTALLED_APPS = [
@@ -115,3 +121,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Simulyatsiya xavfsizlik chegaralari (cheksiz hisobni oldini olish uchun).
 GIBRIDSIM_MAX_T = 1000.0
+
+# --- Vercel (serverless) moslashuvi ------------------------------------------
+# Vercel'da fayl tizimi faqat /tmp ga yoziladi. SQLite bazani va statik
+# fayllarni o'sha yerga yo'naltiramiz (vaqtinchalik — har sovuq startda
+# qayta tuziladi; "Tarix" instansiya doirasida ishlaydi, doimiy emas).
+if os.environ.get("VERCEL"):
+    DEBUG = False
+    if DATABASES["default"]["ENGINE"].endswith("sqlite3"):
+        DATABASES["default"]["NAME"] = "/tmp/db.sqlite3"
+    STATIC_ROOT = "/tmp/staticfiles"

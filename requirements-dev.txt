@@ -1,0 +1,4 @@
+# Ishlab chiqish / test bog'liqliklari (deploy uchun shart emas).
+-r requirements.txt
+pytest>=8.0
+pytest-django>=4.8

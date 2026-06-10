@@ -1,0 +1,17 @@
+# Vercel bundle'iga kiritilmaydigan fayllar (hajmni kichik tutish uchun).
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+db.sqlite3
+staticfiles/
+simulator/tests/
+requirements-dev.txt
+pytest.ini
+conftest.py
+.idea/
+.vscode/
+*.md
+build.sh
+render.yaml
