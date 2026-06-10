@@ -1,0 +1,54 @@
+{% extends "simulator/base.html" %}
+
+{% block title %}Tarix — GibridSim{% endblock %}
+{% block nav_history %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h1 class="h4 mb-0">Saqlangan simulyatsiyalar</h1>
+  {% if runs %}<span class="text-muted small">Oxirgi {{ runs|length }} ta</span>{% endif %}
+</div>
+
+{% if runs %}
+<div class="gs-card p-2">
+  <div class="table-responsive">
+    <table class="table gs-table table-hover align-middle mb-0">
+      <thead>
+        <tr>
+          <th>#</th><th>Misol</th><th>Usul</th><th>Hodisalar</th>
+          <th>Holat</th><th>Sana</th><th class="text-end">Amallar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in runs %}
+        <tr>
+          <td class="mono text-muted">{{ run.id }}</td>
+          <td class="fw-semibold">{{ run.preset_name }}</td>
+          <td><span class="m-badge m-{{ run.method }}">{{ run.method }}</span></td>
+          <td class="mono">{{ run.n_events }}</td>
+          <td>
+            {% if run.zeno %}<span class="status-chip status-warn"><span class="status-dot"></span>Zeno</span>
+            {% elif run.success %}<span class="status-chip status-ok"><span class="status-dot"></span>OK</span>
+            {% else %}<span class="status-chip status-err"><span class="status-dot"></span>Xato</span>{% endif %}
+          </td>
+          <td class="mono small text-muted">{{ run.created_at|date:"Y-m-d H:i" }}</td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" style="border-radius:8px"
+               href="{% url 'simulator:simulate' run.preset_key %}?run={{ run.id }}">Ko'rish</a>
+            <a class="btn btn-sm btn-outline-secondary" style="border-radius:8px"
+               href="{% url 'simulator:run_csv' run.id %}">CSV</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="gs-card p-5 text-center">
+  <div style="font-size:2.5rem">🗂️</div>
+  <p class="mt-2 mb-3" style="color:var(--gs-muted)">Hali birorta simulyatsiya saqlanmadi.</p>
+  <a href="{% url 'simulator:index' %}" class="btn btn-gradient">Misollardan birini tanlang →</a>
+</div>
+{% endif %}
+{% endblock %}

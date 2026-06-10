@@ -1,0 +1,11 @@
+# GibridSim talab qiladigan kutubxonalar.
+# Python 3.10+ uchun mos. Frontend (Bootstrap, Plotly) CDN orqali yuklanadi,
+# shuning uchun bu yerda faqat backend bog'liqliklari.
+
+Django>=5.0,<6.0
+numpy>=1.26
+scipy>=1.11
+
+# Testlar uchun (ishlab chiqarishda shart emas):
+pytest>=8.0
+pytest-django>=4.8

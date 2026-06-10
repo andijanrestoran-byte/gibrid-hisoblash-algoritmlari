@@ -1,0 +1,49 @@
+{% extends "simulator/base.html" %}
+
+{% block title %}GibridSim — bosh sahifa{% endblock %}
+{% block nav_presets %}active{% endblock %}
+
+{% block content %}
+<section class="gs-hero mb-4">
+  <div class="position-relative" style="z-index:1; max-width: 820px;">
+    <div class="gs-chip mb-3">🎓 Dissertatsiya simulyatori</div>
+    <h1 class="h2 mb-2">Gibrid hisoblash algoritmlari simulyatori</h1>
+    <p class="mb-3 opacity-90">
+      Uzluksiz (ODE) va diskret (hodisa/o'tish) dinamikani birlashtirgan gibrid
+      tizimlarni sonli modellashtiradi va natijalarni interaktiv grafiklarda
+      vizualizatsiya qiladi.
+    </p>
+    <div class="d-flex flex-wrap gap-2">
+      <span class="gs-chip">⚡ AUTO_ODE — usulni avtomatik almashtirish</span>
+      <span class="gs-chip">🎯 Hodisalar 1e-9 aniqlikda</span>
+      <span class="gs-chip">📈 Adaptiv grafik (cho'qqilar yo'qolmaydi)</span>
+    </div>
+  </div>
+</section>
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h2 class="h5 mb-0">Tayyor misollar</h2>
+  <span class="text-muted small">{{ presets|length }} ta model</span>
+</div>
+
+<div class="row g-3">
+  {% for preset in presets %}
+  <div class="col-md-6 col-lg-4">
+    <a href="{% url 'simulator:simulate' preset.key %}" class="text-decoration-none">
+      <div class="preset-card h-100 p-3 ps-4">
+        <div class="d-flex align-items-start justify-content-between mb-2">
+          <div class="preset-icon">{{ preset.icon }}</div>
+          {% if preset.category %}<span class="preset-tag">{{ preset.category }}</span>{% endif %}
+        </div>
+        <h3 class="h6 mb-1" style="color: var(--gs-text)">{{ preset.name }}</h3>
+        <p class="small mb-3" style="color: var(--gs-muted)">{{ preset.description }}</p>
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="small mono" style="color: var(--gs-muted)">{{ preset.variables|join:", " }}</span>
+          <span class="small fw-semibold" style="color: var(--gs-accent)">Hisoblash →</span>
+        </div>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
