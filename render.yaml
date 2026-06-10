@@ -1,0 +1,20 @@
+# Render.com Blueprint — GibridSim Django ilovasi.
+# Render'da "New +" -> "Blueprint" -> GitHub repo'ni tanlasangiz, shu fayl
+# avtomatik o'qiladi va xizmat sozlanadi.
+services:
+  - type: web
+    name: gibridsim
+    runtime: python
+    plan: free
+    region: frankfurt        # Yevropa (O'zbekistonga yaqinroq); xohlasangiz o'zgartiring
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.6"
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true    # Render xavfsiz tasodifiy kalit yaratadi
+      - key: WEB_CONCURRENCY
+        value: "2"

@@ -1,0 +1,4 @@
+# Shell skriptlari har doim LF qatorlar bilan saqlansin (Render/Linux bash
+# CRLF ni qabul qilmaydi). Python/matn fayllar git tomonidan normallashtiriladi.
+*.sh text eol=lf
+build.sh text eol=lf

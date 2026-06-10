@@ -19,6 +19,16 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
+# Render (yoki boshqa hosting) avtomatik bergan domenni qo'shamiz va POST
+# so'rovlari (CSRF) shu domendan kelishiga ruxsat beramiz.
+CSRF_TRUSTED_ORIGINS = []
+RENDER_HOST = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+if RENDER_HOST:
+    ALLOWED_HOSTS.append(RENDER_HOST)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_HOST}")
+# *.onrender.com domenidan kelgan so'rovlarga ham ishonamiz (zaxira).
+CSRF_TRUSTED_ORIGINS.append("https://*.onrender.com")
+
 # --- Ilovalar -----------------------------------------------------------------
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -32,6 +42,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # WhiteNoise — statik fayllarni Django o'zi (gunicorn ortida) tarqatadi.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -61,12 +73,18 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-# --- Baza (SQLite) ------------------------------------------------------------
+# --- Baza -------------------------------------------------------------------
+# DATABASE_URL berilsa (masalan, Render PostgreSQL) — o'sha ishlatiladi,
+# aks holda lokal SQLite. Deploy'da SQLite vaqtinchalik bo'lishi mumkin
+# (xizmat qayta ishga tushganda "Tarix" tozalanadi) — bu demo uchun maqbul;
+# doimiy saqlash kerak bo'lsa, Render'da bepul PostgreSQL ulang.
+import dj_database_url
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+    )
 }
 
 # --- Parol validatsiyasi ------------------------------------------------------
@@ -83,6 +101,15 @@ USE_TZ = True
 # --- Statik fayllar -----------------------------------------------------------
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# WhiteNoise: statik fayllarni siqib (gzip/brotli) tarqatadi. Manifest emas —
+# biror statik havola yetishmasa ham 500 bermaydi (demo uchun xavfsizroq).
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
